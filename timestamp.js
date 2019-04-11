@@ -1,34 +1,42 @@
-const Http = require("http");
+const express = require("express");
 
-const server = Http.createServer((req, res) => {
+const app = express();
 
-    const timeStampStartIndex = req.url.indexOf(":");
-    const timeStampEndIndex = req.url.indexOf("?");
-    let timeStamp;
-    let utcString;
+app.set("view engine", "ejs");
+app.use(express.static("./static"));
 
-    if(timeStampStartIndex !== -1 && timeStampEndIndex !== -1) {
-        const TimeStamp = req.url.substring(timeStampStartIndex+1, timeStampEndIndex);
+app.get("/timestamp/:timeStamp", (req, res) => {
+    const TimeStamp = req.params.timeStamp;
 
-        if(TimeStamp === "") {
-            timeStamp = (new Date()).getTime();
-            utcString = (new Date()).toUTCString();
-        }
-        else if ( !isNaN(TimeStamp) ) {
-            timeStamp = (new Date(TimeStamp)).getTime();
-            utcString = (new Date(TimeStamp)).toUTCString();
-        }
-        else {
-            res.write(JSON.stringify({"error": "Invalid Date" }));
-        }
-        res.write(JSON.stringify({"date stamp": timeStamp, "utc" : utcString }));
+    console.log("timeStamp : "+TimeStamp);
+    let timeStamp = "-";
+
+    if(TimeStamp === "") {
+        timeStamp = (new Date()).getTime();
+        utcString = (new Date()).toUTCString();
+    }
+    else if ( !isNaN(TimeStamp) ) {
+        timeStamp = (new Date(TimeStamp)).getTime();
+        utcString = (new Date(TimeStamp)).toUTCString();
     }
     else {
-        res.write(JSON.stringify({"error": "Invalid Date" }));
+        res.send(JSON.stringify({"error": "Invalid Date" }));
     }
-    res.end();
-});
+    res.send(JSON.stringify({"date stamp": timeStamp, "utc" : utcString }));
 
-server.listen(3000);
+})
 
+app.get("/timestamp/", (req, res) => {
+    const TimeStamp = req.params.timeStamp;
+
+    res.send("no time stamp found in url");
+})
+
+app.get("/", (req, res) => {
+    const TimeStamp = req.params.timeStamp;
+
+    res.send("no time stamp found in url");
+})
+
+app.listen(3000);
 
