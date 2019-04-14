@@ -2,40 +2,25 @@ const express = require("express");
 
 const app = express();
 
-app.set("view engine", "ejs");
-app.use(express.static("./static"));
-
 app.get("/timestamp/:timeStamp", (req, res) => {
     const TimeStamp = req.params.timeStamp;
 
-    console.log("timeStamp : "+TimeStamp);
-    let timeStamp = "-";
-
-    if(TimeStamp === "") {
-        timeStamp = (new Date()).getTime();
-        utcString = (new Date()).toUTCString();
-    }
-    else if ( !isNaN(TimeStamp) ) {
-        timeStamp = (new Date(TimeStamp)).getTime();
-        utcString = (new Date(TimeStamp)).toUTCString();
+    if ( !isNaN(TimeStamp) ) {
+        const date = new Date(TimeStamp);
+        res.send(JSON.stringify({"date stamp": date.getTime(), "utc" : date.toUTCString() }));
     }
     else {
-        res.send(JSON.stringify({"error": "Invalid Date" }));
+        res.send(JSON.stringify({"Error": "The timestamp sent is not valid. Please try again." }));
     }
-    res.send(JSON.stringify({"date stamp": timeStamp, "utc" : utcString }));
-
 })
 
 app.get("/timestamp/", (req, res) => {
-    const TimeStamp = req.params.timeStamp;
-
-    res.send("no time stamp found in url");
+    const currentDate = new Date();
+    res.send(JSON.stringify({"date stamp": currentDate.getTime(), "utc" : currentDate.toUTCString() }));
 })
 
-app.get("/", (req, res) => {
-    const TimeStamp = req.params.timeStamp;
-
-    res.send("no time stamp found in url");
+app.use((req, res, next) => {
+    res.status(404).send("No time stamp found in url");
 })
 
 app.listen(3000);
