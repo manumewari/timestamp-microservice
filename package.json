@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "main": "timestamp.js",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "ejs": "^2.6.1",
-    "express": "^4.16.4",
-    "nodemon": "^1.18.10"
+    "express": "^4.16.4"
   },
   "devDependencies": {},
   "scripts": {
